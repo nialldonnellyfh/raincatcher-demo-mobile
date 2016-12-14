@@ -147,7 +147,7 @@ angular.module('wfm-mobile.workflow', [
 
       var stepResult = self.result.stepResults[nextStep.activeCondition.stepCode];
 
-      if(stepResult[nextStep.activeCondition.key] === nextStep.activeCondition.value) {
+      if(stepResult.submission[nextStep.activeCondition.key] === nextStep.activeCondition.value) {
         return stepIndex;
       }
     }
