@@ -125,8 +125,36 @@ angular.module('wfm-mobile.workflow', [
 
   self.stepIndex = workflowManager.nextStepIndex(self.workflow.steps, self.result);
 
+
+  //What step do I go next to?
+  self.getNextStepIndex = function() {
+    var currentStepIndex = self.stepIndex++;
+
+    for(var stepIndex = currentStepIndex; stepIndex < self.workflow.steps.length; stepIndex++) {
+      var nextStep = self.workflow.steps[stepIndex];
+
+      //If there are not activeConditions, then this is active by default.
+      if(!nextStep.activeCondition || !nextStep.activeCondition.stepCode) {
+        return stepIndex;
+      }
+
+      //nextStep.activeCondition
+      //var activeCondition = {
+      //  stepCode: 'mysmartstep1',
+      //  key: 'fixlocation',
+      //  value: 'garage'
+      //};
+
+      var stepResult = self.result.stepResults[nextStep.activeCondition.stepCode];
+
+      if(stepResult[nextStep.activeCondition.key] === nextStep.activeCondition.value) {
+        return stepIndex;
+      }
+    }
+  };
+
   self.next = function() {
-    self.stepIndex++;
+    self.stepIndex = self.getNextStepIndex();
     if (self.stepIndex < self.workflow.steps.length) {
       self.stepCurrent = self.workflow.steps[self.stepIndex];
     } else {
@@ -182,12 +210,16 @@ angular.module('wfm-mobile.workflow', [
       if (step.formId) {
         appformClient.syncStepResult(workorder, stepResult)
         .then(function() {
+
+          //Moving to the next step.
           self.next();
         }, function(error) {
           console.error(error);
           throw error;
         });
       } else {
+
+        //Moving to the next step.
         self.next();
       }
     }, function(error) {
