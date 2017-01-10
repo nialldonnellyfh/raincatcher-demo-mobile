@@ -29,6 +29,7 @@ angular.module('wfm-mobile', [
 , require('./auth/auth')
 , require('./calendar/calendar')
 , require('./file/file')
+  , require('./my-own-summary/directive')
 ])
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -159,6 +160,26 @@ angular.module('wfm-mobile', [
 
   return syncPool;
 })
+
+//Registering mediator subscribers for reading / updating result data.
+  .run(function(mediator, resultSync) {
+
+    //Subscribing to a result update topic to update results from a previous
+    mediator.subscribe('wfm:result:update', function(workorderId, updatedResult) {
+      resultSync.createManager().then(function(resultManager) {
+        resultManager.update(updatedResult).then(function() {
+          mediator.publish('done:wfm:result:update:' + workorderId);
+        });
+      });
+    });
+
+
+    mediator.subscribe('wfm:result:read', function(workorderId) {
+      resultSync.createManager().then(function(resultManager) {
+        mediator.publish('done:wfm:result:read:' + workorderId, resultManager.getByWorkorderId(workorderId));
+      });
+    });
+  })
 
 .run(function($rootScope, $state, $q, mediator, userClient) {
   var initPromises = [];

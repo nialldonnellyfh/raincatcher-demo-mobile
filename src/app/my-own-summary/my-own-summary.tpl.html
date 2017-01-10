@@ -1,0 +1,24 @@
+<md-input-container class="md-block" class="">
+
+  <label for="inputName" class="">Vehicle Inspection Fuel</label>
+  <input type="number"
+         name="inputName"
+         ng-model="customSummaryCtrl.result.stepResults['vehicle-inspection'].submission.fuel"
+         ng-required="true"
+  >
+</md-input-container>
+
+<md-input-container class="md-block" class="">
+
+  <label for="inputName" class="">Risk Assessment Complete</label>
+  <input type="text"
+         name="inputName"
+         ng-model="customSummaryCtrl.result.stepResults['risk-assessment'].submission.complete"
+         ng-required="true"
+  >
+</md-input-container>
+
+<div class="workflow-actions md-padding md-whiteframe-z4">
+  <md-button class="md-primary md-hue-1" ng-click="customSummaryCtrl.back($event)">Back</md-button>
+  <md-button class="md-primary" ng-click="customSummaryCtrl.done($event)">Continue</md-button>
+</div>
